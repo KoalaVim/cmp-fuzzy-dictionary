@@ -1,10 +1,11 @@
-local matcher = require('fuzzy_nvim')
+local backends = require('fuzzy_nvim.backends')
 local uv = vim.uv or vim.loop
 
 local defaults = {
 	paths = {},
 	max_items = 15,
 	fuzzy_extra_arg = 0,
+	fuzzy_backend = nil,
 }
 
 local source = {}
@@ -61,6 +62,7 @@ function source:complete(params, callback)
 	vim.schedule(function()
 		local completions = {}
 		local set = {}
+		local matcher = backends.get(self.opts.fuzzy_backend)
 		local matches = matcher:filter(pattern, self.words, self.opts.fuzzy_extra_arg)
 
 		for _, result in ipairs(matches) do
